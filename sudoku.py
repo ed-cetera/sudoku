@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import sys
+
+
 class Error(Exception):
     """Base class for custom exceptions."""
     pass
@@ -120,3 +123,16 @@ class Sudoku:
                     seen.append(self.grid[3*subgrid_line + line][3*subgrid_row + row])
         # No duplicates found
         return True
+
+
+def grids_from_stdin():
+    """Read stdin, return list of Sudoku instances, one per 81 correct input characters."""
+    grids = []
+    filtered_stdin_data = "".join([char for char in sys.stdin.read() if char in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "."]])
+    while len(filtered_stdin_data) >= 81:
+        grids.append(Sudoku(filtered_stdin_data[:81]))
+        filtered_stdin_data = filtered_stdin_data[81:]
+    return grids
+
+# Main
+input_grids = grids_from_stdin()
