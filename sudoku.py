@@ -134,5 +134,35 @@ def grids_from_stdin():
         filtered_stdin_data = filtered_stdin_data[81:]
     return grids
 
+def solve_puzzle(grid):
+    """Solve the given puzzle, return solutions as list of Sudoku instances."""
+    # Backtracking
+    solutions = []
+    if not grid.valid():
+        return solutions
+    for (line, row) in [(ln, rw) for ln in range(9) for rw in range(9)]:
+        if grid.grid[line][row] is None:
+            for guess in range(1, 10):
+                grid.grid[line][row] = guess
+                for solution in solve_puzzle(grid):
+                    solutions.append(solution)
+            grid.grid[line][row] = None
+            break
+    else:
+        solutions.append(Sudoku(grid.__str__()))
+    return solutions
+
 # Main
 input_grids = grids_from_stdin()
+for grid in input_grids:
+    solutions = solve_puzzle(grid)
+    print("Puzzle:")
+    print(grid)
+    if len(solutions) == 0:
+        print("No solution.")
+    elif len(solutions) == 1:
+        print("1 solution:")
+    else:
+        print(len(solutions), "solutions:")
+    for solution in solutions:
+        print(solution)
