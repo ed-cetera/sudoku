@@ -38,7 +38,7 @@ class Sudoku:
         if len(grid_string) != 81:
             raise GridStringError()
         position = 0
-        for (line, row) in [(ln, rw) for ln in range(0, 9) for rw in range(0, 9)]:
+        for (line, row) in [(ln, rw) for ln in range(9) for rw in range(9)]:
             if grid_string[position] == ".":
                 self.grid[line][row] = None
             elif int(grid_string[position]) in range(1, 10):
@@ -49,12 +49,12 @@ class Sudoku:
 
     def __str__(self):
         # Verify correct vertex values
-        for (line, row) in [(ln, rw) for ln in range(0, 9) for rw in range(0, 9)]:
+        for (line, row) in [(ln, rw) for ln in range(9) for rw in range(9)]:
             if self.grid[line][row] not in range(1, 10) and self.grid[line][row] is not None:
                 raise VertexValueError()
         # Generate output string
         output_string = ""
-        for (line, row) in [(ln, rw) for ln in range(0, 9) for rw in range(0, 9)]:
+        for (line, row) in [(ln, rw) for ln in range(9) for rw in range(9)]:
             if self.grid[line][row] is None:
                 output_string += "."
             else:
@@ -64,13 +64,13 @@ class Sudoku:
     def formatted_str(self):
         """Return formatted string for printing the grid."""
         # Verify correct vertex values
-        for (line, row) in [(ln, rw) for ln in range(0, 9) for rw in range(0, 9)]:
+        for (line, row) in [(ln, rw) for ln in range(9) for rw in range(9)]:
             if self.grid[line][row] not in range(1, 10) and self.grid[line][row] is not None:
                 raise VertexValueError()
         # Generate output string
         output_string = ""
-        for line in range(0, 9):
-            for row in range(0, 9):
+        for line in range(9):
+            for row in range(9):
                 if self.grid[line][row] is None:
                     output_string += "."
                 else:
@@ -88,13 +88,13 @@ class Sudoku:
     def valid(self):
         """Check whether the current grid is valid and return bool."""
         # Verify correct vertex values
-        for (line, row) in [(ln, rw) for ln in range(0, 9) for rw in range(0, 9)]:
+        for (line, row) in [(ln, rw) for ln in range(9) for rw in range(9)]:
             if self.grid[line][row] not in range(1, 10) and self.grid[line][row] is not None:
                 raise VertexValueError()
         # Check for duplicate values in lines
-        for line in range(0, 9):
+        for line in range(9):
             seen = []
-            for row in range(0, 9):
+            for row in range(9):
                 if self.grid[line][row] is None:
                     pass
                 elif self.grid[line][row] in seen:
@@ -102,9 +102,9 @@ class Sudoku:
                 else:
                     seen.append(self.grid[line][row])
         # Check for duplicate values in rows
-        for row in range(0, 9):
+        for row in range(9):
             seen = []
-            for line in range(0, 9):
+            for line in range(9):
                 if self.grid[line][row] is None:
                     pass
                 elif self.grid[line][row] in seen:
@@ -112,9 +112,9 @@ class Sudoku:
                 else:
                     seen.append(self.grid[line][row])
         # Check for duplicate values in subgrids
-        for (subgrid_line, subgrid_row) in [(subg_ln, subg_rw) for subg_ln in range(0, 3) for subg_rw in range(0, 3)]:
+        for (subgrid_line, subgrid_row) in [(subg_ln, subg_rw) for subg_ln in range(3) for subg_rw in range(3)]:
             seen = []
-            for (line, row) in [(ln, rw) for ln in range(0, 3) for rw in range(0, 3)]:
+            for (line, row) in [(ln, rw) for ln in range(3) for rw in range(3)]:
                 if self.grid[3*subgrid_line + line][3*subgrid_row + row] is None:
                     pass
                 elif self.grid[3*subgrid_line + line][3*subgrid_row + row] in seen:
