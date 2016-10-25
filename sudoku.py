@@ -22,15 +22,7 @@ class Sudoku:
     """Sudoku grid."""
 
     def __init__(self, grid_string=""):
-        self.grid = [[None, None, None, None, None, None, None, None, None],
-                     [None, None, None, None, None, None, None, None, None],
-                     [None, None, None, None, None, None, None, None, None],
-                     [None, None, None, None, None, None, None, None, None],
-                     [None, None, None, None, None, None, None, None, None],
-                     [None, None, None, None, None, None, None, None, None],
-                     [None, None, None, None, None, None, None, None, None],
-                     [None, None, None, None, None, None, None, None, None],
-                     [None, None, None, None, None, None, None, None, None]]
+        self.grid = [[None for _dummy in range(9)] for _dummy in range(9)]
         if not isinstance(grid_string, str):
             raise GridStringError()
         if grid_string == "":
