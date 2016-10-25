@@ -77,6 +77,21 @@ class Sudoku:
                 output_string += "------+-------+------\n"
         return output_string
 
+    def candidate_map(self):
+        """Return two-dimensional list of sets composed of possible candidates for each vertex."""
+        candidates = [[set(range(1, 10)) for _dummy in range(9)] for _dummy in range(9)]
+        for (line, row) in [(ln, rw) for ln in range(9) for rw in range(9)]:
+            if self.grid[line][row] in range(1, 10):
+                candidates[line][row] = set([self.grid[line][row]])
+                for i in range(9):
+                    if i != row:
+                        candidates[line][i].discard(self.grid[line][row])
+                    if i != line:
+                        candidates[i][row].discard(self.grid[line][row])
+                    if line - line%3 + i//3 != line or row - row%3 + i%3 != row:
+                        candidates[line - line%3 + i//3][row - row%3 + i%3].discard(self.grid[line][row])
+        return candidates
+
     def valid(self):
         """Check whether the current grid is valid and return bool."""
         # Verify correct vertex values
