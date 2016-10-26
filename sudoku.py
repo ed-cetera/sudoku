@@ -143,13 +143,15 @@ def grids_from_stdin():
 
 def solve_puzzle(grid):
     """Solve the given puzzle, return solutions as list of Sudoku instances."""
-    # Backtracking
     solutions = []
     if not grid.valid():
         return solutions
+    # Backtracking, iterating over (first) smallest list of candidates for empty vertices
+    candidates = grid.candidate_map()
+    min_number_of_candidates = min([9] + [len(candidates[ln][rw]) for ln in range(9) for rw in range(9) if grid.grid[ln][rw] is None])
     for (line, row) in [(ln, rw) for ln in range(9) for rw in range(9)]:
-        if grid.grid[line][row] is None:
-            for guess in range(1, 10):
+        if grid.grid[line][row] is None and len(candidates[line][row]) == min_number_of_candidates:
+            for guess in candidates[line][row]:
                 grid.grid[line][row] = guess
                 for solution in solve_puzzle(grid):
                     solutions.append(solution)
