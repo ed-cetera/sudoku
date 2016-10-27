@@ -90,6 +90,45 @@ class Sudoku:
                         candidates[i][row].discard(self.grid[line][row])
                     if line - line%3 + i//3 != line or row - row%3 + i%3 != row:
                         candidates[line - line%3 + i//3][row - row%3 + i%3].discard(self.grid[line][row])
+        # Further reduce candidate map
+        reduce_cadidate_map_further = True
+        while reduce_cadidate_map_further:
+            reduce_cadidate_map_further = False
+            total_number_of_candidates = sum([len(candidates[ln][rw]) for ln in range(9) for rw in range(9)])
+            for number in range(1, 10):
+                for i in range(9):
+                    # Check for single possible vertex for *number* in candidate map line *i*
+                    seen_in_j = []
+                    for j in range(9):
+                        if number in candidates[i][j]:
+                            seen_in_j.append(j)
+                    if len(seen_in_j) == 1:
+                        candidates[i][seen_in_j[0]] = set([number])
+                        for j in range(9):
+                            if j != seen_in_j[0]:
+                                candidates[i][j].discard(number)
+                    # Check for single possible vertex for *number* in candidate map row *i*
+                    seen_in_j = []
+                    for j in range(9):
+                        if number in candidates[j][i]:
+                            seen_in_j.append(j)
+                    if len(seen_in_j) == 1:
+                        candidates[seen_in_j[0]][i] = set([number])
+                        for j in range(9):
+                            if j != seen_in_j[0]:
+                                candidates[j][i].discard(number)
+                    # Check for single possible vertex for *number* in candidate map subsquare *i*
+                    seen_in_j = []
+                    for j in range(9):
+                        if number in candidates[3*(i//3) + j//3][3*(i%3) + j%3]:
+                            seen_in_j.append(j)
+                    if len(seen_in_j) == 1:
+                        candidates[3*(i//3) + seen_in_j[0]//3][3*(i%3) + seen_in_j[0]%3] = set([number])
+                        for j in range(9):
+                            if 3*(i//3) + j//3 != 3*(i//3) + seen_in_j[0]//3 or 3*(i%3) + j%3 != 3*(i%3) + seen_in_j[0]%3:
+                                candidates[3*(i//3) + j//3][3*(i%3) + j%3].discard(number)
+            if sum([len(candidates[ln][rw]) for ln in range(9) for rw in range(9)]) < total_number_of_candidates:
+                reduce_cadidate_map_further = True
         return candidates
 
     def valid(self):
