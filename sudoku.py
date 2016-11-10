@@ -113,6 +113,16 @@ class Sudoku:
                                 candidates[j][seen_in_j[0]].discard(number)
                             if i - i%3 + j//3 != i:
                                 candidates[i - i%3 + j//3][seen_in_j[0] - seen_in_j[0]%3 + j%3].discard(number)
+                    # otherwise add check wheter all candidates for *number* are in the same subsquare
+                    elif 1 < len(seen_in_j) < 4:
+                        subsquares = set()
+                        for j in seen_in_j:
+                            subsquares.add(3*(i//3) + j//3)
+                        if len(subsquares) == 1:
+                            subsquare = subsquares.pop()
+                            for j in range(9):
+                                if 3*(subsquare//3) + j//3 != i:
+                                    candidates[3*(subsquare//3) + j//3][3*(subsquare%3) + j%3].discard(number)
                     # Check for single possible vertex for *number* in candidate map row *i*
                     seen_in_j = []
                     for j in range(9):
@@ -127,6 +137,16 @@ class Sudoku:
                                 candidates[seen_in_j[0]][j].discard(number)
                             if i - i%3 + j%3 != i:
                                 candidates[seen_in_j[0] - seen_in_j[0]%3 + j//3][i - i%3 + j%3].discard(number)
+                    # otherwise add check wheter all candidates for *number* are in the same subsquare
+                    elif 1 < len(seen_in_j) < 4:
+                        subsquares = set()
+                        for j in seen_in_j:
+                            subsquares.add(3*(j//3) + i//3)
+                        if len(subsquares) == 1:
+                            subsquare = subsquares.pop()
+                            for j in range(9):
+                                if 3*(subsquare%3) + j%3 != i:
+                                    candidates[3*(subsquare//3) + j//3][3*(subsquare%3) + j%3].discard(number)
                     # Check for single possible vertex for *number* in candidate map subsquare *i*
                     seen_in_j = []
                     for j in range(9):
@@ -141,6 +161,21 @@ class Sudoku:
                                 candidates[3*(i//3) + seen_in_j[0]//3][j].discard(number)
                             if j not in [3*(i//3), 3*(i//3) + 1, 3*(i//3) + 2]:
                                 candidates[j][3*(i%3) + seen_in_j[0]%3].discard(number)
+                    # otherwise add check wheter all candidates for *number* are in the same line/row
+                    elif 1 < len(seen_in_j) < 4:
+                        lines = set()
+                        rows = set()
+                        for j in seen_in_j:
+                            lines.add(3*(i//3) + j//3)
+                            rows.add(3*(i%3) + j%3)
+                        if len(lines) == 1:
+                            line = lines.pop()
+                            for row in [rw for rw in range(9) if rw not in [3*(i%3), 3*(i%3) + 1, 3*(i%3) + 2]]:
+                                candidates[line][row].discard(number)
+                        elif len(rows) == 1:
+                            row = rows.pop()
+                            for line in [ln for ln in range(9) if ln not in [3*(i//3), 3*(i//3) + 1, 3*(i//3) + 2]]:
+                                candidates[line][row].discard(number)
             if sum([len(candidates[ln][rw]) for ln in range(9) for rw in range(9)]) < total_number_of_candidates:
                 reduce_cadidate_map_further = True
         return candidates
