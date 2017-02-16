@@ -230,6 +230,17 @@ def grids_from_stdin():
         filtered_stdin_data = filtered_stdin_data[81:]
     return grids
 
+def grids_from_files(files):
+    """Take list of filenames, return list of Sudoku instances, one per 81 correct input characters in each file."""
+    grids = []
+    for filename in files:
+        with open(filename) as f:
+            filtered_file_data = "".join([char for char in f.read() if char in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "."]])
+        while len(filtered_file_data) >= 81:
+            grids.append(Sudoku(filtered_file_data[:81]))
+            filtered_file_data = filtered_file_data[81:]
+    return grids
+
 def solve_puzzle(grid):
     """Solve the given puzzle, return solutions as list of Sudoku instances."""
     solutions = []
@@ -257,11 +268,14 @@ argument_subparsers.required = True
 argument_parser_solve = argument_subparsers.add_parser("solve", help="solve Sudoku puzzle", description="Solve Sudoku puzzle.")
 argument_parser_solve.add_argument("-H", action="store_true", help="beautify output for human parsers")
 #argument_parser_solve.add_argument("-o", "--output", help="output to file OUTPUT instead of stdout")
-#argument_parser_solve.add_argument("input", help="input file(s), omitting inplies stdin", nargs="*")
+argument_parser_solve.add_argument("input", help="input file(s), omitting implies stdin", nargs="*")
 args = argument_parser.parse_args()
 
 if args.mode == "solve":
-    input_grids = grids_from_stdin()
+    if len(args.input) == 0:
+        input_grids = grids_from_stdin()
+    else:
+        input_grids = grids_from_files(args.input)
     for grid in input_grids:
         solutions = solve_puzzle(grid)
         if args.H:
