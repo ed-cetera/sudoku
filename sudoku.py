@@ -252,30 +252,32 @@ def solve_puzzle(grid):
 
 # Main
 argument_parser = argparse.ArgumentParser(description="Sudoku tool.", allow_abbrev=False)
-argument_subparsers = argument_parser.add_subparsers(help="select program mode")
-argument_parser_solve = argument_subparsers.add_parser("solve", help="solve Sudoku puzzle")
+argument_subparsers = argument_parser.add_subparsers(dest="mode", help="select program mode")
+argument_subparsers.required = True
+argument_parser_solve = argument_subparsers.add_parser("solve", help="solve Sudoku puzzle", description="Solve Sudoku puzzle.")
 argument_parser_solve.add_argument("-H", action="store_true", help="beautify output for human parsers")
 #argument_parser_solve.add_argument("-o", "--output", help="output to file OUTPUT instead of stdout")
 #argument_parser_solve.add_argument("input", help="input file(s), omitting inplies stdin", nargs="*")
 args = argument_parser.parse_args()
 
-input_grids = grids_from_stdin()
-for grid in input_grids:
-    solutions = solve_puzzle(grid)
-    if args.H:
-        print("Puzzle:")
-        print(grid.formatted_str())
-        print()
-        if len(solutions) == 0:
-            print("No solution.")
-        elif len(solutions) == 1:
-            print("1 solution:")
-        else:
-            print(len(solutions), "solutions:")
-        for solution in solutions:
-            print(solution.formatted_str())
+if args.mode == "solve":
+    input_grids = grids_from_stdin()
+    for grid in input_grids:
+        solutions = solve_puzzle(grid)
+        if args.H:
+            print("Puzzle:")
+            print(grid.formatted_str())
             print()
-    else:
-        print("p", grid, sep="")
-        for solution in solutions:
-            print("s", solution, sep="")
+            if len(solutions) == 0:
+                print("No solution.")
+            elif len(solutions) == 1:
+                print("1 solution:")
+            else:
+                print(len(solutions), "solutions:")
+            for solution in solutions:
+                print(solution.formatted_str())
+                print()
+        else:
+            print("p", grid, sep="")
+            for solution in solutions:
+                print("s", solution, sep="")
