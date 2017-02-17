@@ -267,7 +267,7 @@ argument_subparsers = argument_parser.add_subparsers(dest="mode", help="select p
 argument_subparsers.required = True
 argument_parser_solve = argument_subparsers.add_parser("solve", help="solve Sudoku puzzle", description="Solve Sudoku puzzle.")
 argument_parser_solve.add_argument("-H", action="store_true", help="beautify output for human parsers")
-#argument_parser_solve.add_argument("-o", "--output", help="output to file OUTPUT instead of stdout")
+argument_parser_solve.add_argument("-o", "--output", help="output to new file OUTPUT instead of stdout, error if OUTPUT already exists")
 argument_parser_solve.add_argument("input", help="input file(s), omitting implies stdin", nargs="*")
 args = argument_parser.parse_args()
 
@@ -276,22 +276,32 @@ if args.mode == "solve":
         input_grids = grids_from_stdin()
     else:
         input_grids = grids_from_files(args.input)
+    if args.output is None:
+        outfile = sys.stdout
+    else:
+        outfile = open(args.output, "x");
+        print("Solving ", end="", flush=True)
     for grid in input_grids:
         solutions = solve_puzzle(grid)
         if args.H:
-            print("Puzzle:")
-            print(grid.formatted_str())
-            print()
+            print("Puzzle:", file=outfile)
+            print(grid.formatted_str(), file=outfile)
+            print(file=outfile)
             if len(solutions) == 0:
-                print("No solution.")
+                print("No solution.", file=outfile)
             elif len(solutions) == 1:
-                print("1 solution:")
+                print("1 solution:", file=outfile)
             else:
-                print(len(solutions), "solutions:")
+                print(len(solutions), "solutions:", file=outfile)
             for solution in solutions:
-                print(solution.formatted_str())
-                print()
+                print(solution.formatted_str(), file=outfile)
+                print(file=outfile)
         else:
-            print("p", grid, sep="")
+            print("p", grid, sep="", file=outfile)
             for solution in solutions:
-                print("s", solution, sep="")
+                print("s", solution, sep="", file=outfile)
+        if args.output is not None:
+            print(".", end="", flush=True)
+    if args.output is not None:
+        print(" done.")
+        outfile.close()
